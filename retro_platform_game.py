@@ -1856,7 +1856,7 @@ def main():
     current_level = 1
     score = 0
     camera_x = 0
-    game_state = "playing"  # "playing", "level_complete", "game_over", "victory"
+    game_state = "playing"  # "playing", "paused", "level_complete", "game_over", "victory"
     transition_timer = 0
     
     # Create game objects
@@ -1876,6 +1876,14 @@ def main():
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     running = False
+                elif event.key == pygame.K_p and game_state == "playing":
+                    # Pause the game
+                    game_state = "paused"
+                    sound_manager.play_sound('jump')  # Use existing sound for pause
+                elif event.key == pygame.K_p and game_state == "paused":
+                    # Unpause the game
+                    game_state = "playing"
+                    sound_manager.play_sound('jump')  # Use existing sound for unpause
                 elif event.key == pygame.K_r and (game_state == "game_over" or game_state == "victory"):
                     # Restart game
                     current_level = 1
@@ -1966,7 +1974,7 @@ def main():
         # Draw everything
         screen.fill(BLUE)  # Sky background
         
-        if game_state == "playing" or game_state == "level_complete":
+        if game_state == "playing" or game_state == "level_complete" or game_state == "paused":
             # Draw platforms
             for platform in platforms:
                 platform.draw(screen, camera_x)
@@ -2056,6 +2064,7 @@ def main():
             instructions = [
                 "Arrow Keys/WASD: Move & Jump",
                 "X: Punch, Z: Kick",
+                "P: Pause/Unpause",
                 "Collect diamonds & superdiamonds!",
                 "SuperDiamonds give special powers:",
                 "Yellow=Speed, Green=Jump, Pink=Invincible, Orange=Strength",
@@ -2078,6 +2087,28 @@ def main():
                 else:
                     final_text = font.render("Final level completed!", True, WHITE)
                     screen.blit(final_text, (SCREEN_WIDTH//2 - 120, SCREEN_HEIGHT//2 + 20))
+            
+            # Pause overlay
+            if game_state == "paused":
+                # Semi-transparent overlay
+                pause_overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
+                pause_overlay.set_alpha(128)  # Semi-transparent
+                pause_overlay.fill(BLACK)
+                screen.blit(pause_overlay, (0, 0))
+                
+                # Pause text
+                pause_text = big_font.render("GAME PAUSED", True, WHITE)
+                pause_rect = pause_text.get_rect(center=(SCREEN_WIDTH//2, SCREEN_HEIGHT//2 - 50))
+                screen.blit(pause_text, pause_rect)
+                
+                # Instructions
+                resume_text = font.render("Press P to resume", True, WHITE)
+                resume_rect = resume_text.get_rect(center=(SCREEN_WIDTH//2, SCREEN_HEIGHT//2 + 20))
+                screen.blit(resume_text, resume_rect)
+                
+                quit_text = font.render("Press ESC to quit", True, WHITE)
+                quit_rect = quit_text.get_rect(center=(SCREEN_WIDTH//2, SCREEN_HEIGHT//2 + 60))
+                screen.blit(quit_text, quit_rect)
         
         elif game_state == "game_over":
             game_over_text = big_font.render("GAME OVER!", True, RED)
