@@ -28,12 +28,12 @@ CYAN = (0, 255, 255)
 PURPLE = (128, 0, 128)
 ORANGE = (255, 165, 0)
 
-# Player constants - HARDER DIFFICULTY
-PLAYER_SPEED = 4  # Reduced from 6 - slower movement
-JUMP_STRENGTH = -18  # Increased jump height to allow reaching all platforms
-GRAVITY = 1.0  # Increased from 0.8 - faster falling
-PUNCH_RANGE = 35  # Reduced from 45 - shorter attack range
-KICK_RANGE = 45  # Reduced from 55 - shorter attack range
+# Player constants - EXTREME DIFFICULTY
+PLAYER_SPEED = 3  # Reduced from 4 - much slower movement
+JUMP_STRENGTH = -25  # Increased to -25 to reach higher platforms (max ~260 normal, ~390 boosted)
+GRAVITY = 1.2  # Increased from 1.0 - faster falling, harder to control
+PUNCH_RANGE = 30  # Reduced from 35 - shorter attack range
+KICK_RANGE = 40  # Reduced from 45 - shorter attack range
 
 # Sound and Music Manager
 class SoundManager:
@@ -229,8 +229,8 @@ class Player:
         self.kicking = False
         self.punch_timer = 0
         self.kick_timer = 0
-        self.diamonds = 30  # Reduced from 50 - less starting health
-        self.lives = 2  # Reduced from 3 - fewer lives
+        self.diamonds = 20  # Reduced from 30 - much less starting health
+        self.lives = 3  # Reduced from 3 - fewer lives
         self.invulnerable = 0  # Invulnerability frames after taking damage
         self.animation_frame = 0
         self.punch_effect = []  # Visual punch effects
@@ -261,16 +261,16 @@ class Player:
             return  # Power-ups on cooldown
             
         if power_type == "speed":
-            self.powers["speed"] = 300  # Reduced from 600 - 5 seconds instead of 10
+            self.powers["speed"] = 180  # Reduced to 3 seconds (from 10)
             sound_manager.play_sound('speed_boost')
         elif power_type == "jump":
-            self.powers["jump"] = 300  # Reduced from 600 - 5 seconds instead of 10
+            self.powers["jump"] = 180  # Reduced to 3 seconds (from 10)
             sound_manager.play_sound('jump_boost')
         elif power_type == "invincible":
-            self.powers["invincible"] = 150  # Reduced from 300 - 2.5 seconds instead of 5
+            self.powers["invincible"] = 120  # Reduced to 2 seconds (from 5)
             sound_manager.play_sound('invincible')
         elif power_type == "strength":
-            self.powers["strength"] = 300  # Reduced from 600 - 5 seconds instead of 10
+            self.powers["strength"] = 180  # Reduced to 3 seconds (from 10)
             sound_manager.play_sound('speed_boost')  # Reuse speed sound for now
         
         # Set cooldown period
@@ -482,8 +482,8 @@ class Player:
     def lose_life(self):
         self.lives -= 1
         sound_manager.play_sound('life_lost')
-        self.diamonds = 20  # Reduced from 50 - less health on respawn
-        self.stamina = 50   # Reduced stamina on respawn
+        self.diamonds = 10  # Reduced from 20 - very low health on respawn
+        self.stamina = 30   # Reduced stamina on respawn - much lower
         self.respawn()
     
     def respawn(self):
@@ -852,15 +852,17 @@ class Robot:
         self.height = 40
         self.vel_x = random.choice([-2, 2])
         self.vel_y = 0
-        self.health = 30 if robot_type == "normal" else 80  # Tougher robots have much more health
-        self.max_health = self.health
+        self.max_health = 80 if robot_type == "normal" else 120  # Much higher health
+        self.health = self.max_health
         self.alive = True
         self.attack_timer = 0
-        self.patrol_distance = 100
+        self.patrol_distance = 150  # Increased patrol range
         self.start_x = x
         self.type = robot_type
-        self.speed = 1.5 if robot_type == "normal" else 3.0  # Tougher robots are faster
-        self.attack_damage = 5 if robot_type == "normal" else 8  # Tougher robots deal more damage
+        self.speed = 2.5 if robot_type == "normal" else 4.0  # Much faster robots
+        self.attack_damage = 8 if robot_type == "normal" else 12  # Much higher damage
+        self.detection_range = 300  # Much wider detection range
+        self.aggression_timer = 0  # New aggression system
         
     def update(self, platforms, player):
         if not self.alive:
@@ -869,12 +871,20 @@ class Robot:
         # Simple AI - patrol and chase player if close
         distance_to_player = abs(self.x - player.x)
         
-        if distance_to_player < 200:
-            # Chase player
+        if distance_to_player < self.detection_range:  # Use new detection range
+            # Chase player aggressively
             if player.x > self.x:
                 self.vel_x = self.speed
             else:
                 self.vel_x = -self.speed
+            self.aggression_timer = 120  # Stay aggressive for 2 seconds
+        elif self.aggression_timer > 0:
+            # Continue chasing even if player moves away (for a short time)
+            if player.x > self.x:
+                self.vel_x = self.speed
+            else:
+                self.vel_x = -self.speed
+            self.aggression_timer -= 1
         else:
             # Patrol
             if abs(self.x - self.start_x) > self.patrol_distance:
@@ -984,8 +994,8 @@ class Boss:
         self.height = 80
         self.vel_x = 0
         self.vel_y = 0
-        self.health = 100 + (level * 75)  # Much more health scaling
-        self.max_health = self.health
+        self.max_health = 100 + (level * 75)  # Much more health scaling
+        self.health = self.max_health
         self.alive = True
         self.attack_timer = 0
         self.level = level
@@ -1295,55 +1305,56 @@ def create_level(level_num):
     platforms.append(Platform(boss_platform_x, SCREEN_HEIGHT - 100, 250, 60))
     
     if level_num == 1:
-        # Level 1 - Simple layout
+        # Level 1 - HARDER: Increased gaps and more challenging jumps
         platforms.extend([
-            Platform(300, SCREEN_HEIGHT - 150, 120, 30),
-            Platform(600, SCREEN_HEIGHT - 200, 150, 30),
-            Platform(1000, SCREEN_HEIGHT - 180, 100, 30),
-            Platform(1300, SCREEN_HEIGHT - 280, 120, 30),
-            Platform(1600, SCREEN_HEIGHT - 320, 140, 30),
-            Platform(2000, SCREEN_HEIGHT - 250, 100, 30),
-            Platform(2300, SCREEN_HEIGHT - 400, 120, 30),
+            Platform(250, SCREEN_HEIGHT - 150, 100, 30),  # Smaller platform
+            Platform(450, SCREEN_HEIGHT - 220, 120, 30),  # Higher and further
+            Platform(700, SCREEN_HEIGHT - 180, 80, 30),   # Smaller and further
+            Platform(950, SCREEN_HEIGHT - 280, 100, 30),  # High jump (reduced from 300)
+            Platform(1200, SCREEN_HEIGHT - 320, 120, 30), # Higher still (reduced from 350)
+            Platform(1450, SCREEN_HEIGHT - 250, 80, 30),  # Smaller platform
+            Platform(1700, SCREEN_HEIGHT - 310, 100, 30), # High jump (reduced from 350 to 310 - accessible with boost)
         ])
         
         # Robots (not near boss area)
         robots.extend([
-            Robot(350, SCREEN_HEIGHT - 80),
-            Robot(650, SCREEN_HEIGHT - 80),
-            Robot(1050, SCREEN_HEIGHT - 210),
-            Robot(1350, SCREEN_HEIGHT - 310),
-            Robot(1650, SCREEN_HEIGHT - 350),
-            Robot(2050, SCREEN_HEIGHT - 280),
+            Robot(250, SCREEN_HEIGHT - 80),
+            Robot(400, SCREEN_HEIGHT - 80),
+            Robot(650, SCREEN_HEIGHT - 210),
+            Robot(850, SCREEN_HEIGHT - 310),
+            Robot(1050, SCREEN_HEIGHT - 350),
+            Robot(1250, SCREEN_HEIGHT - 280),
         ])
         
         boss = Boss(boss_platform_x + 50, SCREEN_HEIGHT - 160, 1)
         
     elif level_num == 2:
-        # Level 2 - More complex
+        # Level 2 - HARDER: More complex with challenging gaps
         platforms.extend([
-            Platform(200, SCREEN_HEIGHT - 120, 100, 30),
-            Platform(400, SCREEN_HEIGHT - 200, 120, 30),
-            Platform(600, SCREEN_HEIGHT - 160, 80, 30),
-            Platform(800, SCREEN_HEIGHT - 280, 100, 30),
-            Platform(1000, SCREEN_HEIGHT - 220, 120, 30),
-            Platform(1200, SCREEN_HEIGHT - 350, 100, 30),
-            Platform(1400, SCREEN_HEIGHT - 180, 140, 30),
-            Platform(1600, SCREEN_HEIGHT - 400, 120, 30),
-            Platform(1800, SCREEN_HEIGHT - 300, 100, 30),
-            Platform(2000, SCREEN_HEIGHT - 450, 120, 30),
-            Platform(2200, SCREEN_HEIGHT - 250, 100, 30),
+            Platform(200, SCREEN_HEIGHT - 120, 80, 30),   # Smaller platform
+            Platform(380, SCREEN_HEIGHT - 220, 100, 30),  # Higher gap
+            Platform(580, SCREEN_HEIGHT - 160, 70, 30),   # Very small platform
+            Platform(750, SCREEN_HEIGHT - 280, 90, 30),   # High jump required (reduced from 300)
+            Platform(950, SCREEN_HEIGHT - 240, 100, 30),  # Wide gap
+            Platform(1150, SCREEN_HEIGHT - 310, 80, 30),  # High jump (reduced from 350 to 310 - accessible with boost)
+            Platform(1350, SCREEN_HEIGHT - 200, 120, 30), # Big drop then climb
+            Platform(1550, SCREEN_HEIGHT - 310, 100, 30), # High jump (reduced from 380 to 310 - accessible with boost)
+            Platform(1750, SCREEN_HEIGHT - 280, 80, 30),  # Reduced from 320 for easier access
+            Platform(1950, SCREEN_HEIGHT - 310, 100, 30), # High jump (reduced from 380 to 310 - accessible with boost)
+            Platform(2150, SCREEN_HEIGHT - 280, 90, 30),  # Long gap
         ])
         
+        # Robots (not near boss area)
         robots.extend([
-            Robot(250, SCREEN_HEIGHT - 80),
-            Robot(450, SCREEN_HEIGHT - 230),
-            Robot(650, SCREEN_HEIGHT - 190),
-            Robot(850, SCREEN_HEIGHT - 310),
-            Robot(1050, SCREEN_HEIGHT - 250),
-            Robot(1250, SCREEN_HEIGHT - 380),
-            Robot(1450, SCREEN_HEIGHT - 210),
-            Robot(1850, SCREEN_HEIGHT - 330),
-            Robot(2050, SCREEN_HEIGHT - 480),
+            Robot(200, SCREEN_HEIGHT - 80),
+            Robot(350, SCREEN_HEIGHT - 230),
+            Robot(500, SCREEN_HEIGHT - 190),
+            Robot(650, SCREEN_HEIGHT - 310),
+            Robot(800, SCREEN_HEIGHT - 250),
+            Robot(950, SCREEN_HEIGHT - 380),
+            Robot(1100, SCREEN_HEIGHT - 210),
+            Robot(1250, SCREEN_HEIGHT - 330),
+            Robot(1400, SCREEN_HEIGHT - 480),
         ])
         
         boss = Boss(boss_platform_x + 50, SCREEN_HEIGHT - 160, 2)
@@ -1356,7 +1367,7 @@ def create_level(level_num):
             Platform(500, SCREEN_HEIGHT - 260, 80, 30),
             Platform(700, SCREEN_HEIGHT - 340, 100, 30),
             Platform(900, SCREEN_HEIGHT - 420, 80, 30),
-            Platform(1100, SCREEN_HEIGHT - 500, 100, 30),
+            Platform(1100, SCREEN_HEIGHT - 400, 100, 30),  # Reduced from 500 to 400 for accessibility
             Platform(1300, SCREEN_HEIGHT - 380, 120, 30),
             Platform(1500, SCREEN_HEIGHT - 280, 100, 30),
             Platform(1700, SCREEN_HEIGHT - 200, 80, 30),
@@ -1424,7 +1435,7 @@ def create_level(level_num):
             Platform(320, SCREEN_HEIGHT - 260, 80, 30),
             Platform(480, SCREEN_HEIGHT - 340, 60, 30),
             Platform(600, SCREEN_HEIGHT - 420, 80, 30),
-            Platform(750, SCREEN_HEIGHT - 500, 60, 30),
+            Platform(750, SCREEN_HEIGHT - 400, 60, 30),   # Reduced from 500 to 400 for accessibility
             Platform(900, SCREEN_HEIGHT - 380, 80, 30),
             Platform(1050, SCREEN_HEIGHT - 280, 60, 30),
             Platform(1200, SCREEN_HEIGHT - 200, 80, 30),
@@ -1434,7 +1445,7 @@ def create_level(level_num):
             Platform(1800, SCREEN_HEIGHT - 250, 80, 30),
             Platform(1950, SCREEN_HEIGHT - 400, 60, 30),
             Platform(2100, SCREEN_HEIGHT - 300, 80, 30),
-            Platform(2250, SCREEN_HEIGHT - 480, 60, 30),
+            Platform(2250, SCREEN_HEIGHT - 400, 60, 30),  # Reduced from 480 to 400 for accessibility
             Platform(2400, SCREEN_HEIGHT - 380, 80, 30),
         ])
         
@@ -1467,7 +1478,7 @@ def create_level(level_num):
             Platform(350, SCREEN_HEIGHT - 260, 60, 30),
             Platform(480, SCREEN_HEIGHT - 340, 60, 30),
             Platform(610, SCREEN_HEIGHT - 420, 60, 30),
-            Platform(740, SCREEN_HEIGHT - 500, 60, 30),
+            Platform(740, SCREEN_HEIGHT - 400, 60, 30),   # Reduced from 500 to 400 for accessibility
             Platform(870, SCREEN_HEIGHT - 420, 60, 30),
             Platform(1000, SCREEN_HEIGHT - 340, 60, 30),
             Platform(1130, SCREEN_HEIGHT - 260, 60, 30),
@@ -1514,7 +1525,7 @@ def create_level(level_num):
             Platform(380, SCREEN_HEIGHT - 280, 60, 30),
             Platform(500, SCREEN_HEIGHT - 360, 70, 30),
             Platform(650, SCREEN_HEIGHT - 440, 60, 30),
-            Platform(780, SCREEN_HEIGHT - 520, 70, 30),
+            Platform(780, SCREEN_HEIGHT - 400, 70, 30),   # Reduced from 520 to 400 for accessibility
             Platform(920, SCREEN_HEIGHT - 440, 60, 30),
             Platform(1050, SCREEN_HEIGHT - 360, 70, 30),
             Platform(1200, SCREEN_HEIGHT - 280, 60, 30),
@@ -1562,7 +1573,7 @@ def create_level(level_num):
             Platform(360, SCREEN_HEIGHT - 300, 50, 30),
             Platform(450, SCREEN_HEIGHT - 380, 50, 30),
             Platform(540, SCREEN_HEIGHT - 460, 50, 30),
-            Platform(630, SCREEN_HEIGHT - 540, 50, 30),
+            Platform(630, SCREEN_HEIGHT - 400, 50, 30),   # Reduced from 540 to 400 for accessibility
             Platform(720, SCREEN_HEIGHT - 460, 50, 30),
             Platform(810, SCREEN_HEIGHT - 380, 50, 30),
             Platform(900, SCREEN_HEIGHT - 300, 50, 30),
@@ -1627,7 +1638,7 @@ def create_level(level_num):
             Platform(280, SCREEN_HEIGHT - 320, 40, 30),
             Platform(350, SCREEN_HEIGHT - 400, 40, 30),
             Platform(420, SCREEN_HEIGHT - 480, 40, 30),
-            Platform(490, SCREEN_HEIGHT - 560, 40, 30),
+            Platform(490, SCREEN_HEIGHT - 400, 40, 30),   # Reduced from 560 to 400 for accessibility
             Platform(560, SCREEN_HEIGHT - 480, 40, 30),
             Platform(630, SCREEN_HEIGHT - 400, 40, 30),
             Platform(700, SCREEN_HEIGHT - 320, 40, 30),
@@ -1638,7 +1649,7 @@ def create_level(level_num):
             Platform(1060, SCREEN_HEIGHT - 260, 40, 30),
             Platform(1130, SCREEN_HEIGHT - 340, 40, 30),
             Platform(1200, SCREEN_HEIGHT - 420, 40, 30),
-            Platform(1270, SCREEN_HEIGHT - 500, 40, 30),
+            Platform(1270, SCREEN_HEIGHT - 400, 40, 30),  # Reduced from 500 to 400 for accessibility
             Platform(1340, SCREEN_HEIGHT - 420, 40, 30),
             Platform(1410, SCREEN_HEIGHT - 340, 40, 30),
             Platform(1480, SCREEN_HEIGHT - 260, 40, 30),
@@ -1647,7 +1658,7 @@ def create_level(level_num):
             Platform(1700, SCREEN_HEIGHT - 200, 40, 30),
             Platform(1770, SCREEN_HEIGHT - 300, 40, 30),
             Platform(1840, SCREEN_HEIGHT - 400, 40, 30),
-            Platform(1910, SCREEN_HEIGHT - 500, 40, 30),
+            Platform(1910, SCREEN_HEIGHT - 400, 40, 30),  # Reduced from 500 to 400 for accessibility
             Platform(1980, SCREEN_HEIGHT - 400, 40, 30),
             Platform(2050, SCREEN_HEIGHT - 300, 40, 30),
             Platform(2120, SCREEN_HEIGHT - 200, 40, 30),
@@ -1712,7 +1723,7 @@ def create_level(level_num):
             Platform(360, SCREEN_HEIGHT - 380, 35, 30),
             Platform(420, SCREEN_HEIGHT - 440, 35, 30),
             Platform(480, SCREEN_HEIGHT - 500, 35, 30),
-            Platform(540, SCREEN_HEIGHT - 560, 35, 30),
+            Platform(540, SCREEN_HEIGHT - 400, 35, 30),   # Reduced from 560 to 400 for accessibility
             Platform(600, SCREEN_HEIGHT - 500, 35, 30),
             Platform(660, SCREEN_HEIGHT - 440, 35, 30),
             Platform(720, SCREEN_HEIGHT - 380, 35, 30),
@@ -1726,7 +1737,7 @@ def create_level(level_num):
             Platform(1210, SCREEN_HEIGHT - 320, 35, 30),
             Platform(1270, SCREEN_HEIGHT - 400, 35, 30),
             Platform(1330, SCREEN_HEIGHT - 480, 35, 30),
-            Platform(1390, SCREEN_HEIGHT - 560, 35, 30),
+            Platform(1390, SCREEN_HEIGHT - 400, 35, 30),  # Reduced from 560 to 400 for accessibility
             Platform(1450, SCREEN_HEIGHT - 480, 35, 30),
             Platform(1510, SCREEN_HEIGHT - 400, 35, 30),
             Platform(1570, SCREEN_HEIGHT - 320, 35, 30),
@@ -1737,7 +1748,7 @@ def create_level(level_num):
             Platform(1880, SCREEN_HEIGHT - 280, 35, 30),
             Platform(1940, SCREEN_HEIGHT - 380, 35, 30),
             Platform(2000, SCREEN_HEIGHT - 480, 35, 30),
-            Platform(2060, SCREEN_HEIGHT - 580, 35, 30),
+            Platform(2060, SCREEN_HEIGHT - 400, 35, 30),  # Reduced from 580 to 400 for accessibility
             Platform(2120, SCREEN_HEIGHT - 480, 35, 30),
             Platform(2180, SCREEN_HEIGHT - 380, 35, 30),
             Platform(2240, SCREEN_HEIGHT - 280, 35, 30),
