@@ -30,7 +30,7 @@ ORANGE = (255, 165, 0)
 
 # Player constants - HARDER DIFFICULTY
 PLAYER_SPEED = 4  # Reduced from 6 - slower movement
-JUMP_STRENGTH = -14  # Reduced from -16 - lower jumps
+JUMP_STRENGTH = -18  # Increased jump height to allow reaching all platforms
 GRAVITY = 1.0  # Increased from 0.8 - faster falling
 PUNCH_RANGE = 35  # Reduced from 45 - shorter attack range
 KICK_RANGE = 45  # Reduced from 55 - shorter attack range
