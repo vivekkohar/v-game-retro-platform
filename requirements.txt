@@ -1,0 +1,12 @@
+# Retro Platform Game Requirements
+# Python 3.8+ required
+
+# Core game engine
+pygame>=2.5.0
+
+# Sound generation and processing
+numpy>=1.21.0
+
+# Optional: For development and testing
+# pytest>=7.0.0  # Uncomment for running tests
+# black>=22.0.0  # Uncomment for code formatting
