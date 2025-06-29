@@ -1902,6 +1902,23 @@ def main():
                         platforms, robots, diamonds, superdiamonds, boss = create_level(current_level)
                         game_state = "playing"
                         camera_x = 0
+                # CHEAT CODES - Level selection (only during gameplay)
+                elif game_state == "playing" and event.key >= pygame.K_1 and event.key <= pygame.K_9:
+                    # Jump to level 1-9
+                    cheat_level = event.key - pygame.K_0  # Convert key to number
+                    if 1 <= cheat_level <= 10:
+                        current_level = cheat_level
+                        player = Player(100, SCREEN_HEIGHT - 200)
+                        platforms, robots, diamonds, superdiamonds, boss = create_level(current_level)
+                        camera_x = 0
+                        sound_manager.play_sound('superdiamond_collect')  # Special sound for cheat
+                elif game_state == "playing" and event.key == pygame.K_0:
+                    # Jump to level 10
+                    current_level = 10
+                    player = Player(100, SCREEN_HEIGHT - 200)
+                    platforms, robots, diamonds, superdiamonds, boss = create_level(current_level)
+                    camera_x = 0
+                    sound_manager.play_sound('superdiamond_collect')  # Special sound for cheat
         
         if game_state == "playing":
             # Update camera to follow player

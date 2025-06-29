@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>From Prompt to Play: Building a Video Game without coding using Amazon Q</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Lora', serif;
+            background-color: #f7fafc;
+        }
+        h1, h2, h3 {
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+        }
+        .prompt {
+            background-color: #1a202c;
+            color: #a0aec0;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            border-left: 4px solid #4fd1c5;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .placeholder {
+            background-color: #e2e8f0;
+            border: 2px dashed #cbd5e0;
+            text-align: center;
+            padding: 4rem 1rem;
+            border-radius: 0.5rem;
+            color: #718096;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <div class="container mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-12">
+        
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">From Prompt to Play: How Amazon Q enabled a 9-Year-Old to Build his own Video Game</h1>
+            <p class="text-lg text-gray-600">An experiment in curiosity, creativity, and the power of generative AI.</p>
+        </header>
+
+        <article class="prose lg:prose-xl max-w-none">
+            <p class="lead text-xl">It all started with a challenge from the AWS Community: <a href="https://community.aws/content/2xIoduO0xhkhUApQpVUIqBFGmAc/build-games-with-amazon-q-cli-and-score-a-t-shirt?lang=en" class="text-teal-600 hover:text-teal-800" target="_blank">Build Games with Amazon Q CLI</a>. This sparked an idea to conduct a simple experiment: How easily can kids build a game today? How much adult supervision would they need? And the ultimate question: could it be more exciting than Switch/Roblox?</p>
+
+            <br>
+
+            <em>  My role in this adventure was simple: I'd be the tech support, setting up the environment, offering guidance on tools, and figuring out how to get the final creation online. The creative director, lead designer, and primary tester? A 9-year-old kid.</em>
+            <br>
+            <br>
+                <img src="images/final-game.png" alt="Final Game">
+                <figcaption>Screenshot of final game.</figcaption>
+<br>
+
+            <h2 class="text-3xl font-bold mt-12 mb-6">Phase 1: The First Spark of Creation</h2>
+            <p>We started by getting the tools ready. I installed the Amazon Q CLI on Mac, asked it to create a conda environment and handed over the keyboard.</p>
+            <p class="prompt">"Create a conda env"</p>
+            <p>With the environment active, it was time to bring the game idea to life. The initial concept was a classic platformer with a twist.</p>
+            <p class="prompt">"Activate the conda env and create a platform retro game where you have to jump platforms and defeat evil robots by punching them, kicking them, jumping over them. The platform should have many small platforms, with dirt and grass on top. The player should look like a boy."</p>
+
+            <p>Amazon Q generated Python code using the Pygame library. In a surprisingly short time, we had... something! It was a game. But it wasn't quite right. The creative director had notes.</p>
+
+
+            <h2 class="text-3xl font-bold mt-12 mb-6">Phase 2: Iteration and Refinement</h2>
+            <p>The first version was a great starting point, but the vision was much grander. The feedback was immediate and specific. We needed more gameplay mechanics and a clearer objective.</p>
+            <p class="prompt">"The player is not looking like a boy. There is no option to kick or punch as it doesn't seem to have hand or legs. The player has to collect diamonds scattered around the map. Player loses 5 diamonds whenever it touches the robots and is not punching or kicking. Player loses a life if diamond count reaches zero."</p>
+            <p>Q took the feedback and started refactoring. The game was evolving right before our eyes. The next request was to expand the world and add a goal.</p>
+            <p class="prompt">"The map should be bigger where the player can run through it. There should be a boss battle at the end of the map and every time player defeats the boss, the level gets harder and map changes. Lets have a total of five levels and three lives for the player."</p>
+            
+            <p>At this point, we realized this was becoming a real project. It was time to introduce a crucial tool for any developer: version control. A quick lesson on Git was in order.</p>
+            <p class="prompt">"Create a git repo, commit the changes and document the game"</p>
+            <p>Q not only initialized the repository but also generated a surprisingly thorough `README.md` file explaining the game. Now, back to the fun stuff.</p>
+
+            
+            <p>The game was getting better, but needed more polish and... punch. Literally.</p>
+            <p class="prompt">"Can you improve the player so that its kicks and punches are visible. Boss should come only at the end of the map. Add music with sounds when kicked, punched, jumped, life lost, diamond collected, diamond lost, etc."</p>
+            
+            <p>With sound effects and better animations, it felt much more alive. But play-testing revealed some bugs and balancing issues.</p>
+            <p class="prompt">"Player keeps going up when jumping on robots multiple times. Fix that. Boss is not fighting. Make him fight as well."</p>
+            <p class="prompt">"Make sure all platforms can be reached"</p>
+
+            <p>With the core mechanics solid, it was time for some classic video game flair.</p>
+            <p class="prompt">"Include superdiamonds that give you power ups such as invincibility, jump power and speed"</p>
+            <p class="prompt">"Make the game harder"</p>
+            <p>And with that final prompt, the game looked fantastic. It was challenging, it was fun, and it was almost exactly what he had imagined.</p>
+            <p>Finally we asked it to include cheatcodes to switch to any level for testing. </pp>
+            <p class="prompt">"Include a cheatcode to start the game at any desired level"</p>
+            
+
+
+
+            <h2 class="text-3xl font-bold mt-12 mb-6">The Kid's Corner: Unfiltered Reviews</h2>
+            <blockquote class="border-l-4 border-teal-500 pl-4 italic text-gray-700 my-8">
+                <p>"This thing is smartest ever."</p>
+                <p>"I want to make it different from other games - I do not want to get sued."</p>
+                <p>"The boss looks like a parent."</p>
+            </blockquote>
+
+
+            <h2 class="text-3xl font-bold mt-12 mb-6">The Challenge of Sharing</h2>
+            <p>The excitement was palpable. He really wanted to share the game with friends and family. This, it turned out, was harder than making the game itself. We explored a few options:</p>
+            <ul class="list-disc list-inside">
+                <li><strong>Packaging with Pygbag:</strong> Our first thought was to package the Pygame project into WebAssembly (WASM). Unfortunately, this path was fraught with issues and didn't produce a playable result even though AI tried really hard.</li>
+                <li><strong>Creating a Django App:</strong> The next approach was to port the game to a Django web application. Amazon Q successfully created the Django project, created a basic version using APIs and we successfully hosted it. The web-specific features like a leaderboard, user login, and an admin dashboard worked surprisingly well. However, the core game had new bugs and AI couldn't fix the issues properly.</li>
+            </ul>
+                           <img src="images/django-app-3.png" alt="Django App">
+                <figcaption>Django App.</figcaption>
+                                           <img src="images/django-app-1.png" alt="Django App">
+                <figcaption>Django App Game.</figcaption>
+
+            <h2 class="text-3xl font-bold mt-12 mb-6">Lessons from this experiment</h2>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h3 class="text-2xl font-bold mb-4">What We Loved ❤️</h3>
+                    <ul class="list-disc list-inside space-y-2">
+                        <li><strong>A Window into AI "Thinking":</strong> Watching Q process the requests and generate thinking tokens helped us understand what was happening behind the scenes. It wasn't just magic; it was a process.</li>
+                        <li><strong>Vision to Reality:</strong> The tool did a remarkable job of translating a child's imaginative description into actual, functional code.</li>
+                        <li><strong>Excellent Documentation:</strong> The auto-generated documentation was a huge plus, teaching good habits from the start.</li>
+                        <li><strong>Clean Code:</strong> Q handled code cleanup and refactoring beautifully, maintaining a clean codebase even after many iterative changes.</li>
+                    </ul>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h3 class="text-2xl font-bold mb-4">The Hurdles 🚧</h3>
+                     <ul class="list-disc list-inside space-y-2">
+                        <li><strong>The Patience Test:</strong> Code generation takes quite a bit of time, the waiting was a challenge.</li>
+                        <li><strong>Model Availability:</strong> We occasionally ran into messages about model unavailability and had to switch models to continue.</li>
+                        <li><strong>Hitting the Quota:</strong> We were prolific! By the end of our creative spree, we had exhausted our monthly free quota. A testament to how much we used it - particularly the failed attempts in successfully hosting a playable version.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h2 class="text-3xl font-bold mt-12 mb-6">Next Steps and Final Thoughts</h2>
+            <p>This was an incredible introduction foray into game development and the practical application of AI.
+            Next, we will use a different tech stack, one more inherently suited for web and mobile deployment, like JavaScript with a library like Phaser. The goal remains the same: create, play, and share.</p>
+            <p>For now, check out a video of the final game in action below!</p>
+
+<iframe width="800" height="400"
+src="https://youtu.be/3-gL8RM_9Ck">
+</iframe>
+<p> Game Video with level switching enabled.</p>
+
+        </article>
+
+    </div>
+</body>
+</html>
